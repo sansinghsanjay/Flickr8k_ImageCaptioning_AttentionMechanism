@@ -1,0 +1,179 @@
+Time taken for epoch-1 and batch-1: 22.46990442276001 sec, Loss: 2.2415020850396927
+
+Time taken for epoch-1 and batch-101: 40.396193981170654 sec, Loss: 1.4331924684586064
+
+Time taken for epoch-1 and batch-201: 58.300397872924805 sec, Loss: 1.3033741366478704
+
+Epoch 1 Loss 1.428742
+Time taken for 1 epoch 62.9291877746582 sec
+
+Time taken for epoch-2 and batch-1: 1.2008726596832275 sec, Loss: 1.209778078140751
+
+Time taken for epoch-2 and batch-101: 19.19206929206848 sec, Loss: 1.134524929908014
+
+Time taken for epoch-2 and batch-201: 37.11392569541931 sec, Loss: 1.1454983372842111
+
+Epoch 2 Loss 1.109071
+Time taken for 1 epoch 41.70030665397644 sec
+
+Time taken for epoch-3 and batch-1: 1.2028591632843018 sec, Loss: 1.1055418445217995
+
+Time taken for epoch-3 and batch-101: 18.98026704788208 sec, Loss: 1.0486766446021296
+
+Time taken for epoch-3 and batch-201: 36.8588342666626 sec, Loss: 1.0149089444068171
+
+Epoch 3 Loss 1.005771
+Time taken for 1 epoch 41.48889517784119 sec
+
+Time taken for epoch-4 and batch-1: 1.1885771751403809 sec, Loss: 0.9849222244754914
+
+Time taken for epoch-4 and batch-101: 19.21122908592224 sec, Loss: 0.913664787046371
+
+Time taken for epoch-4 and batch-201: 36.992432594299316 sec, Loss: 0.8928578284478956
+
+Epoch 4 Loss 0.936169
+Time taken for 1 epoch 41.58589839935303 sec
+
+Time taken for epoch-5 and batch-1: 1.22035551071167 sec, Loss: 0.9294919044740738
+
+Time taken for epoch-5 and batch-101: 19.219409704208374 sec, Loss: 0.8642624885805191
+
+Time taken for epoch-5 and batch-201: 37.004037380218506 sec, Loss: 0.8710164716166835
+
+Epoch 5 Loss 0.881170
+Time taken for 1 epoch 41.66939306259155 sec
+
+Time taken for epoch-6 and batch-1: 1.2353579998016357 sec, Loss: 0.8416786193847656
+
+Time taken for epoch-6 and batch-101: 19.283052682876587 sec, Loss: 0.8753468298142956
+
+Time taken for epoch-6 and batch-201: 37.111560106277466 sec, Loss: 0.839171624952747
+
+Epoch 6 Loss 0.834397
+Time taken for 1 epoch 41.684582471847534 sec
+
+Time taken for epoch-7 and batch-1: 1.2159397602081299 sec, Loss: 0.8200633141302294
+
+Time taken for epoch-7 and batch-101: 18.976569414138794 sec, Loss: 0.8521681139546056
+
+Time taken for epoch-7 and batch-201: 36.861491441726685 sec, Loss: 0.7849399197486139
+
+Epoch 7 Loss 0.792829
+Time taken for 1 epoch 41.495150566101074 sec
+
+Time taken for epoch-8 and batch-1: 1.1879644393920898 sec, Loss: 0.7499576691658266
+
+Time taken for epoch-8 and batch-101: 19.095010995864868 sec, Loss: 0.7400607447470388
+
+Time taken for epoch-8 and batch-201: 36.98033094406128 sec, Loss: 0.7303379428002142
+
+Epoch 8 Loss 0.754435
+Time taken for 1 epoch 41.57034420967102 sec
+
+Time taken for epoch-9 and batch-1: 1.1893939971923828 sec, Loss: 0.7370818353468372
+
+Time taken for epoch-9 and batch-101: 19.091013431549072 sec, Loss: 0.7626088050103956
+
+Time taken for epoch-9 and batch-201: 36.79720687866211 sec, Loss: 0.7428870662566154
+
+Epoch 9 Loss 0.720703
+Time taken for 1 epoch 41.420008182525635 sec
+
+Time taken for epoch-10 and batch-1: 1.2030954360961914 sec, Loss: 0.7501719074864541
+
+Time taken for epoch-10 and batch-101: 18.965484857559204 sec, Loss: 0.7464156612273185
+
+Time taken for epoch-10 and batch-201: 36.69989800453186 sec, Loss: 0.6601229021626134
+
+Epoch 10 Loss 0.688697
+Time taken for 1 epoch 41.316415786743164 sec
+
+Time taken for epoch-11 and batch-1: 1.2224342823028564 sec, Loss: 0.6936298493416079
+
+Time taken for epoch-11 and batch-101: 19.068481922149658 sec, Loss: 0.6733815593104209
+
+Time taken for epoch-11 and batch-201: 37.037312269210815 sec, Loss: 0.6929849193942162
+
+Epoch 11 Loss 0.660371
+Time taken for 1 epoch 41.69329118728638 sec
+
+Time taken for epoch-12 and batch-1: 1.2056431770324707 sec, Loss: 0.6279447001795615
+
+Time taken for epoch-12 and batch-101: 19.066656589508057 sec, Loss: 0.6396485605547505
+
+Time taken for epoch-12 and batch-201: 36.81794714927673 sec, Loss: 0.6322265748054751
+
+Epoch 12 Loss 0.633810
+Time taken for 1 epoch 41.40742015838623 sec
+
+Time taken for epoch-13 and batch-1: 1.2127327919006348 sec, Loss: 0.6408794772240424
+
+Time taken for epoch-13 and batch-101: 19.086496114730835 sec, Loss: 0.6352309565390309
+
+Time taken for epoch-13 and batch-201: 36.945308208465576 sec, Loss: 0.6107427535518524
+
+Epoch 13 Loss 0.607607
+Time taken for 1 epoch 41.580204010009766 sec
+
+Time taken for epoch-14 and batch-1: 1.1901218891143799 sec, Loss: 0.5681312314925655
+
+Time taken for epoch-14 and batch-101: 19.030577898025513 sec, Loss: 0.6180550975184287
+
+Time taken for epoch-14 and batch-201: 37.92170810699463 sec, Loss: 0.584274415046938
+
+Epoch 14 Loss 0.583265
+Time taken for 1 epoch 42.607117652893066 sec
+
+Time taken for epoch-15 and batch-1: 1.2114169597625732 sec, Loss: 0.6003933568154612
+
+Time taken for epoch-15 and batch-101: 19.036428213119507 sec, Loss: 0.5537569599766885
+
+Time taken for epoch-15 and batch-201: 36.83427119255066 sec, Loss: 0.5748652796591481
+
+Epoch 15 Loss 0.560865
+Time taken for 1 epoch 41.54032611846924 sec
+
+Time taken for epoch-16 and batch-1: 1.191676378250122 sec, Loss: 0.5652611024918095
+
+Time taken for epoch-16 and batch-101: 19.157564163208008 sec, Loss: 0.589234875094506
+
+Time taken for epoch-16 and batch-201: 37.000195026397705 sec, Loss: 0.5286467152257119
+
+Epoch 16 Loss 0.540590
+Time taken for 1 epoch 41.615052938461304 sec
+
+Time taken for epoch-17 and batch-1: 1.2480602264404297 sec, Loss: 0.5391997675741872
+
+Time taken for epoch-17 and batch-101: 19.01720118522644 sec, Loss: 0.5121207083425214
+
+Time taken for epoch-17 and batch-201: 36.81451439857483 sec, Loss: 0.5396963550198463
+
+Epoch 17 Loss 0.520692
+Time taken for 1 epoch 41.460567474365234 sec
+
+Time taken for epoch-18 and batch-1: 1.2604763507843018 sec, Loss: 0.5396990006969821
+
+Time taken for epoch-18 and batch-101: 19.165968656539917 sec, Loss: 0.5397945527107485
+
+Time taken for epoch-18 and batch-201: 37.00944495201111 sec, Loss: 0.5194556943831905
+
+Epoch 18 Loss 0.501490
+Time taken for 1 epoch 41.59951043128967 sec
+
+Time taken for epoch-19 and batch-1: 1.233036994934082 sec, Loss: 0.4999419489214497
+
+Time taken for epoch-19 and batch-101: 19.02323842048645 sec, Loss: 0.48070421526508944
+
+Time taken for epoch-19 and batch-201: 36.93465209007263 sec, Loss: 0.4804319566295993
+
+Epoch 19 Loss 0.483977
+Time taken for 1 epoch 41.56733226776123 sec
+
+Time taken for epoch-20 and batch-1: 1.1997451782226562 sec, Loss: 0.47721090624409335
+
+Time taken for epoch-20 and batch-101: 19.024826288223267 sec, Loss: 0.5036955495034495
+
+Time taken for epoch-20 and batch-201: 36.76341438293457 sec, Loss: 0.4642217697635774
+
+Epoch 20 Loss 0.468315
+Time taken for 1 epoch 41.48344898223877 sec
