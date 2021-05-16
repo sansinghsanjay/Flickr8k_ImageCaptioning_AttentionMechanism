@@ -15,11 +15,11 @@ def percentage_progress(completed, total):
 	return perc_progress
 
 # paths
-entire_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/captions.txt"
-train_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/archive/Flickr_8k.trainImages.txt"
-val_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/archive/Flickr_8k.valImages.txt"
-test_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/archive/Flickr_8k.testImages.txt"
-target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/intermediate_files/"
+entire_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/archive/captions.txt"
+train_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/archive/Flickr_8k.trainImages.txt"
+val_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/archive/Flickr_8k.valImages.txt"
+test_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/archive/Flickr_8k.testImages.txt"
+target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/"
 
 # reading entire data
 f_name = ""

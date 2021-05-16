@@ -9,11 +9,11 @@ To check training, validation and test data set
 import matplotlib.pyplot as plt
 
 # paths
-original_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/archive/captions.txt" 
-train_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/archive/Flickr_8k.trainImages.txt"
-validation_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/archive/Flickr_8k.valImages.txt"
-test_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/archive/Flickr_8k.testImages.txt"
-target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/archive/" 
+original_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/archive/captions.txt" 
+train_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/archive/Flickr_8k.trainImages.txt"
+validation_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/archive/Flickr_8k.valImages.txt"
+test_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/archive/Flickr_8k.testImages.txt"
+target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/archive/" 
 
 # read original data
 original_filenames = set()
