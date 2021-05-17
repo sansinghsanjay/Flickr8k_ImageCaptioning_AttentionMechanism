@@ -3,6 +3,7 @@ Sanjay Singh
 san.singhsanjay@gmail.com
 April-2021
 scrpt for Image Captioning dataset - Flickr8k
+To preprocess captions of training data
 '''
 
 # packages
@@ -37,8 +38,8 @@ def removeSingleChar_removeNum(s):
 	return s
 
 # paths
-train_file_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/intermediate_files/train_image_caption.csv"
-target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/intermediate_files/"
+train_file_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/train_image_caption.csv"
+target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/"
 
 # read caption file
 train_df = pd.read_csv(train_file_path)
