@@ -1,79 +1,64 @@
 '''
 Sanjay Singh
 san.singhsanjay@gmail.com
-April-2021
-To generate and save bottleneck features of images - model used Invecption V3
+May-2021
+Script to generate VGG-16 features of images
 '''
 
 # packages
-import pandas as pd
-import cv2
+from tqdm import tqdm
 import numpy as np
-from keras.models import Sequential
-from keras.applications.inception_v3 import preprocess_input
-from keras.applications.inception_v3 import InceptionV3
-from keras.models import Model
+import pandas as pd
+from keras.applications.vgg16 import VGG16, preprocess_input
+import tensorflow as tf
+import cv2
 
 # constants
-IMG_WIDTH = 299
-IMG_HEIGHT = 299
-IMG_CHANNEL = 3
+IMG_W = 224
+IMG_H = 224
+BATCH_SIZE = 1
 
-# function to update status
-def percentage_progress(completed, total):
-	perc_progress = (completed / total) * 100
-	perc_prgoress = round(perc_progress, 2)
-	return perc_progress
+# paths
+train_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/train_image_caption_processed.csv" 
+#val_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/val_image_caption_processed.csv"
+#test_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/test_image_caption_processed.csv"
+train_image_source_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/Images/"
+#val_image_source_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/val_images/"
+#test_image_source_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/test_images/"
+train_target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/train_npy_files/" 
+#val_target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/val_npy_files/"
+#test_target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/test_npy_files/"
 
-# function to generate image bottleneck features - from InceptionV3
-def gen_bottleneck_features(train_filenames, from_ix, to_ix):
-	# read images, resize them and preprocess them according to inception_v3
-	train_images = np.ndarray([len(train_filenames), IMG_WIDTH, IMG_HEIGHT, IMG_CHANNEL])
-	for i in range(len(train_filenames)):
-		img = cv2.imread(image_path + train_filenames[i])
+# function to generate VGG-16 features and saving them in npy files
+def gen_npy_save(image_features_extract_model, source_path, imagenames, target_path, status):
+	print("Working on " + status + ": ")
+	filecount = 0
+	for imagename in tqdm(imagenames):
+		img = cv2.imread(source_path + imagename)
 		img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-		img = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT))
+		img = cv2.resize(img, (IMG_W, IMG_H))
 		img = preprocess_input(img)
-		train_images[i] = img
-		if((i + 1) % 500 == 0 or (i + 1) == len(train_filenames)):
-			perc_progress = percentage_progress((i + 1), len(train_filenames))
-			print("Completed reading and pre-processing of images: ", perc_progress, " %", end='\r')
-	print()	
-	# instantiating model
-	model = InceptionV3(weights='imagenet')
-	# removing last layer (output layer) of inception_v3 model
-	model = Model(model.input, model.layers[-2].output)
-	# generating bottleneck feature of images
-	print("Generating bottleneck features of all train images by using InceptionV3. Wait...")
-	feat_vec = model.predict(train_images)
-	print("Generated bottleneck features for all train images")
-	# converting np.ndarray type feat_vec into pd.DataFrame
-	feat_vec = pd.DataFrame(feat_vec)
-	# adding column at beginning for image name
-	feat_vec.insert(loc=0, column='image', value=train_filenames)
-	# saving feat_vec
-	filename = "gen_image_vec_" + str(from_ix) + "_" + str(to_ix) + ".csv"
-	feat_vec.to_csv(target_path + filename, index=False)
-	print("Dimension of generated csv (containing image filenames and bottleneck features): ", feat_vec.shape)
-	print("Saved ", filename)
+		img = np.reshape(img, (1, img.shape[0], img.shape[1], img.shape[2]))
+		img_features = image_features_extract_model(img) # batch_features.shape: [BATCH_SIZE, 7, 7, 512]
+		img_features = tf.reshape(img_features, (img.shape[0], -1, img_features.shape[3])) # batch_features.shape: [BATCH_SIZE, 49, 512]
+		img_features = img_features.numpy()
+		np.save(target_path + imagename + ".npy", img_features[0])
+		#filecount += 1
+		#if(filecount == 100):
+		#	break
 
-# path
-image_path = "/home/sansingh/Downloads/Flickr8k_ImageCaptioning/archive/Images/"
-train_filenames_path = "/home/sansingh/Downloads/Flickr8k_ImageCaptioning/archive/Flickr_8k.trainImages.txt"
-target_path = "/home/sansingh/Downloads/Flickr8k_ImageCaptioning/output/intermediate_files/"
+# reading csv files
+train_df = pd.read_csv(train_data_path)
+#val_df = pd.read_csv(val_data_path)
+#test_df = pd.read_csv(test_data_path)
 
-# reading train_filenames
-train_filenames = list()
-f_ptr = open(train_filenames_path, "r")
-lines = f_ptr.readlines()
-for line in lines:
-	train_filenames.append(line.strip())
-print("Completed reading training filenames")
+# loading VGG-16
+image_model = tf.keras.applications.VGG16(include_top=False, weights='imagenet')
+new_input = image_model.input
+hidden_layer = image_model.layers[-1].output
+image_features_extract_model = tf.keras.Model(new_input, hidden_layer)
 
-# due to memory issues, generating bottleneck features and saving them in parts
-gen_bottleneck_features(train_filenames[0:1000], 1, 1000)
-gen_bottleneck_features(train_filenames[1000:2000], 1001, 2000)
-gen_bottleneck_features(train_filenames[2000:3000], 2001, 3000)
-gen_bottleneck_features(train_filenames[3000:4000], 3001, 4000)
-gen_bottleneck_features(train_filenames[4000:5000], 4001, 5000)
-gen_bottleneck_features(train_filenames[5000:6000], 5001, 6000)
+# generating npy files and saving in respecting target path
+gen_npy_save(image_features_extract_model, train_image_source_path, list(train_df['image']), train_target_path, "train")
+#gen_npy_save(image_features_extract_model, val_image_source_path, list(val_df['image']), val_target_path, "val")
+#gen_npy_save(image_features_extract_model, test_image_source_path, list(test_df['image']), test_target_path, "test")

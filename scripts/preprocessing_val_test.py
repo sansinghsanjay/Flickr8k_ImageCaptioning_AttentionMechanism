@@ -67,7 +67,7 @@ def removeSingleChar_removeNum(s):
 	return s
 
 # removing words from captions that are not in vocabulary
-def remove_words_not_in_vocabulary(df):
+def remove_words_not_in_vocabulary(df, vocabulary):
 	for i in range(df.shape[0]):
 		caption = df.iloc[i]['caption']
 		caption_list = caption.split("#")
@@ -102,13 +102,13 @@ test_df = data_cleaning(test_df)
 f_ptr = open(vocabulary_file_path, "r")
 lines = f_ptr.readlines()
 f_ptr.close()
-vocabulary = set()
+vocabulary = list()
 for line in lines:
-	vocabulary.update(line.strip())
+	vocabulary.append(line.strip())
 
 # removing words from captions that are not in vocabulary
-val_df = remove_words_not_in_vocabulary(val_df)
-test_df = remove_words_not_in_vocabulary(test_df)
+val_df = remove_words_not_in_vocabulary(val_df, vocabulary)
+test_df = remove_words_not_in_vocabulary(test_df, vocabulary)
 
 # saving captions_df
 val_df.to_csv(target_path + "val_image_caption_processed.csv", index=False)

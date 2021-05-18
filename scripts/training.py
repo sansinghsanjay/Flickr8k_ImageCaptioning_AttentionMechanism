@@ -1,5 +1,4 @@
 '''
-Sanjay Singh
 san.singhsanjay@gmail.com
 April-2021
 Implementation of:
@@ -45,9 +44,15 @@ from os import listdir
 
 # CONSTANTS
 EMBEDDING_DIM = 256
-BATCH_SIZE = 32
+BATCH_SIZE = 10
 BUFFER_SIZE = 1000
 UNITS = 512
+
+# paths
+images_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/train_npy_files/"
+img_captions_csv_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/small_df.csv"
+vocabulary_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/vocabulary.txt"
+max_caption_len_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/max_caption_length.txt"
 
 # https://www.tensorflow.org/tutorials/text/image_captioning
 class VGG16_Encoder(tf.keras.Model):
@@ -162,12 +167,6 @@ def map_func(img_name, cap):
 	img_tensor = np.load(img_name.decode('utf-8')+'.npy')
 	return img_tensor, cap
 
-# paths
-images_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/Images/"
-img_captions_csv_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/intermediate_files/train_image_caption_processed.csv"
-vocabulary_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/intermediate_files/vocabulary.txt"
-max_caption_len_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/intermediate_files/max_caption_length.txt"
-
 # reading dataset
 data = pd.read_csv(img_captions_csv_path)
 img_name = list(data['image'])
@@ -221,13 +220,6 @@ for i in range(len(img_caption)):
 # padding zeros to each caption to make it equal to max_caption_len
 img_caption_padded = tf.keras.preprocessing.sequence.pad_sequences(img_caption_ix, max_caption_len, padding='post')
 
-# replicating each value of img_name 5 times to make it equal to the length of img_caption_padded
-img_name_padded = list()
-for i in range(len(img_name)):
-	for j in range(5):
-		img_name_padded.append(img_name[i])
-print("Shape of img_name_padded: ", len(img_name_padded))
-
 # loading vgg-16 model to extract bottleneck features
 image_model = tf.keras.applications.VGG16(include_top=False, weights='imagenet')
 new_input = image_model.input
@@ -254,7 +246,7 @@ optimizer = tf.keras.optimizers.Adam()
 loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
 
 # making image and caption map - for training
-dataset = tf.data.Dataset.from_tensor_slices((img_name_padded, img_caption_padded))
+dataset = tf.data.Dataset.from_tensor_slices((all_img_names, img_caption_padded))
 dataset = dataset.map(lambda item1, item2: tf.numpy_function(map_func, [item1, item2], [tf.float32, tf.int32]), num_parallel_calls=tf.data.experimental.AUTOTUNE)
 dataset = dataset.shuffle(BUFFER_SIZE).batch(BATCH_SIZE).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 #dataset = dataset.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
@@ -264,7 +256,7 @@ encoder = VGG16_Encoder(EMBEDDING_DIM)
 decoder = Rnn_Local_Decoder(EMBEDDING_DIM, UNITS, vocab_size)
 
 # defining num_steps 
-num_steps = len(img_name_padded) // BATCH_SIZE
+num_steps = len(all_img_names) // BATCH_SIZE
 
 # training related parameters and training
 loss_plot = []
