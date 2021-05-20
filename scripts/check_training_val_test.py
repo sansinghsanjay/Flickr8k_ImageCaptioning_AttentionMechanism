@@ -6,7 +6,6 @@ To check training, validation and test data set
 '''
 
 # packages
-import matplotlib.pyplot as plt
 
 # paths
 original_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/archive/captions.txt" 
@@ -20,10 +19,11 @@ original_filenames = set()
 f_ptr = open(original_data_path, "r")
 lines = f_ptr.readlines()
 f_ptr.close()
-for line in lines:
-	line = line.split(",")[0]
-	line = line.strip()
-	original_filenames.add(line)
+for i in range(len(lines)):
+	if(i > 0): # ignore header line
+		line = lines[i].split(",")[0]
+		line = line.strip()
+		original_filenames.add(line)
 original_filenames = list(original_filenames)
 
 # status of original data
@@ -81,17 +81,3 @@ print("Completed writing validation filenames")
 
 # status of validation filenames
 print("Number of validation filenames: ", len(validation_filenames))
-
-# making plot for number of files in original, training, validation and testing data
-labels = ['Original', 'Training', 'Validation', 'Testing']
-values = [len(original_filenames), len(train_filenames), len(validation_filenames), len(test_filenames)]
-fig, ax = plt.subplots()
-plt.title("Number of images in original, train, validation and test dataset")
-plt.xlabel("Name of dataset")
-plt.ylabel("Number of images")
-plt.grid()
-plt.bar(labels, values, color='blue')
-for index, value in enumerate(values):
-	ax.text(index, value, str(value), color='black')
-plt.savefig(target_path + "no_of_imgs_in_original_train_val_test.png")
-print("Plot for number of images in original, training, validation and test is saved successfully")

@@ -20,18 +20,12 @@ BATCH_SIZE = 1
 
 # paths
 train_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/train_image_caption_processed.csv" 
-#val_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/val_image_caption_processed.csv"
-#test_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/test_image_caption_processed.csv"
 train_image_source_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/Images/"
-#val_image_source_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/val_images/"
-#test_image_source_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/test_images/"
 train_target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/train_npy_files/" 
-#val_target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/val_npy_files/"
-#test_target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/test_npy_files/"
 
 # function to generate VGG-16 features and saving them in npy files
 def gen_npy_save(image_features_extract_model, source_path, imagenames, target_path, status):
-	print("Working on " + status + ": ")
+	print("Generating VGG-16 bottleneck features for " + status + " data:")
 	filecount = 0
 	for imagename in tqdm(imagenames):
 		img = cv2.imread(source_path + imagename)
@@ -43,14 +37,10 @@ def gen_npy_save(image_features_extract_model, source_path, imagenames, target_p
 		img_features = tf.reshape(img_features, (img.shape[0], -1, img_features.shape[3])) # batch_features.shape: [BATCH_SIZE, 49, 512]
 		img_features = img_features.numpy()
 		np.save(target_path + imagename + ".npy", img_features[0])
-		#filecount += 1
-		#if(filecount == 100):
-		#	break
+	print()
 
 # reading csv files
 train_df = pd.read_csv(train_data_path)
-#val_df = pd.read_csv(val_data_path)
-#test_df = pd.read_csv(test_data_path)
 
 # loading VGG-16
 image_model = tf.keras.applications.VGG16(include_top=False, weights='imagenet')
@@ -60,5 +50,3 @@ image_features_extract_model = tf.keras.Model(new_input, hidden_layer)
 
 # generating npy files and saving in respecting target path
 gen_npy_save(image_features_extract_model, train_image_source_path, list(train_df['image']), train_target_path, "train")
-#gen_npy_save(image_features_extract_model, val_image_source_path, list(val_df['image']), val_target_path, "val")
-#gen_npy_save(image_features_extract_model, test_image_source_path, list(test_df['image']), test_target_path, "test")

@@ -56,9 +56,9 @@ FEATURE_SHAPE_1 = 512
 # paths
 #images_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/Images/"
 #img_captions_csv_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/intermediate_files/train_image_caption_processed.csv"
-vocabulary_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/intermediate_files/vocabulary.txt"
-max_caption_len_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/intermediate_files/max_caption_length.txt"
-checkpoint_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/attention_mech_models_35Epochs/"
+vocabulary_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/vocabulary.txt"
+max_caption_len_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/max_caption_length.txt"
+checkpoint_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/trained_model/"
 
 # https://www.tensorflow.org/tutorials/text/image_captioning
 class VGG16_Encoder(tf.keras.Model):
@@ -195,7 +195,7 @@ ckpt = tf.train.Checkpoint(encoder=encoder,decoder=decoder,optimizer=optimizer)
 ckpt_manager = tf.train.CheckpointManager(ckpt, checkpoint_path, max_to_keep=None)
 ckpt_manager.restore_or_initialize()
 
-img_name = ['/home/sansingh/github_repo/sample_data_for_attention/Images/2826769554_85c90864c9.jpg']
+img_name = ['/home/sansingh/github_repo/sample_data_for_attention/Images/2076906555_c20dc082db.jpg']
 
 # to map data to loading function - to create npy files
 encode_train = sorted(set(img_name))
@@ -233,7 +233,8 @@ for (batch, img_tensor) in enumerate(dataset):
 	for i in range(max_caption_len):
 		predictions, hidden, attention_weights = decoder(dec_input, features, hidden)
 		#attention_plot[i] = tf.reshape(attention_weights, (-1, )).numpy()
-		predicted_id = tf.random.categorical(predictions, 1)[0][0].numpy()
+		#predicted_id = tf.random.categorical(predictions, 1)[0][0].numpy()
+		predicted_id = np.argmax(predictions.numpy()[0])
 		temp_result.append(ixtoword[predicted_id])
 		if ixtoword[predicted_id] == 'endseq':
 			break
@@ -247,60 +248,3 @@ print("\n")
 print("Result:")
 print(result_str)
 print("Result Length: ", len(result[0]))
-
-#############################################################
-#########################END#################################
-#############################################################
-encoder_features = encoder(features)
-
-dec_input = tf.expand_dims([wordtoix['startseq']], 0)
-result = []
-
-hidden = decoder.reset_state(batch_size=1)
-for i in range(max_caption_len):
-	predictions, hidden, attention_weights = decoder(dec_input, features, hidden)
-	#attention_plot[i] = tf.reshape(attention_weights, (-1, )).numpy()
-	predicted_id = tf.random.categorical(predictions, 1)[0][0].numpy()
-	result.append(ixtoword[predicted_id])
-	if ixtoword[predicted_id] == 'endseq':
-		break
-	dec_input = tf.expand_dims([predicted_id], 0)
-
-#########################END#######################
-
-# get path of test images directory
-img_dir = input("Enter path of test images directory: ")
-
-# exit program if img_dir is not a directory
-if(os.path.isdir(img_dir) == False):
-	print("Not a directory")
-	print("Aborting program")
-	sys.exit(0)
-
-# get name of img files and creating a list of their's full path
-img_name_list = os.listdir(img_dir)
-for i in range(len(img_name_list)):
-	img_name_list[i] = img_dir + img_name_list[i]
-
-# generating vgg 16 features for each image
-# to map data to loading function - to create npy files
-encode_train = sorted(set(img_name_list))
-image_dataset = tf.data.Dataset.from_tensor_slices(encode_train)
-image_dataset = image_dataset.map(load_image, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-#image_dataset = image_dataset.map(load_image, num_parallel_calls=tf.data.experimental.AUTOTUNE).batch(BATCH_SIZE)
-
-# loading vgg-16 model to extract bottleneck features
-image_model = tf.keras.applications.VGG16(include_top=False, weights='imagenet')
-new_input = image_model.input
-hidden_layer = image_model.layers[-1].output
-image_features_extract_model = tf.keras.Model(new_input, hidden_layer)
-
-# reading images and generating their VGG-16 feature of images
-img_mat = np.ndarray((len(img_name_list), FEATURE_SHAPE_0, FEATURE_SHAPE_1), dtype=np.float32)
-i = 0
-print("Loading images and generating their features: ")
-for img in tqdm(image_dataset):
-	features = image_features_extract_model(img) # batch_features.shape: [BATCH_SIZE, 7, 7, 512]
-	features = tf.reshape(features, (features.shape[0], -1, features.shape[3])) # batch_features.shape: [BATCH_SIZE, 49, 512]
-	img_mat[i] = features
-	i += 1

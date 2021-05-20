@@ -8,7 +8,6 @@ To segregate train, validation and test data
 # packages
 import pandas as pd
 from tqdm import tqdm
-import matplotlib.pyplot as plt
 
 # paths
 entire_data_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/archive/captions.txt"
@@ -121,17 +120,3 @@ print("Shape of test data: ", test_df.shape)
 # saving test_df
 test_df.to_csv(target_path + "test_image_caption.csv", index=False)
 print("Saved test data - image and captions")
-
-# making plot for number of files in original, training and testing data
-labels = ['Total', 'Train', 'Test']
-values = [entire_df.shape[0], train_df.shape[0], test_df.shape[0]]
-fig, ax = plt.subplots()
-plt.title("Number of Images in Total, Train and Test Dataset")
-plt.xlabel("Name of dataset")
-plt.ylabel("Number of images")
-plt.grid()
-plt.bar(labels, values, color='blue')
-for index, value in enumerate(values):
-	ax.text(index, value, str(value), color='black')
-plt.savefig(target_path + "no_of_imgs_in_total_train_test.png")
-print("Plot for number of images in total, training and test is saved successfully")

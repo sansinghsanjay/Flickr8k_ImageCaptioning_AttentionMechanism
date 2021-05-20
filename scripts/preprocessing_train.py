@@ -9,15 +9,10 @@ To preprocess captions of training data
 # packages
 import pandas as pd
 import string
+from tqdm import tqdm
 
 # GLOBAL CONST
 WORD_COUNT_THRESH = 10
-
-# fucntion for finding progress in percentage
-def percentage_progress(completed, total):
-	perc_progress = (completed / total) * 100
-	perc_progress = round(perc_progress, 2)
-	return perc_progress
 
 # function to remove any single character from a string
 def removeSingleChar_removeNum(s):
@@ -46,7 +41,8 @@ train_df = pd.read_csv(train_file_path)
 
 # data cleaning
 table = str.maketrans('', '', string.punctuation) # to eliminate all special characters
-for i in range(train_df.shape[0]):
+print("Cleaning data:")
+for i in tqdm(range(train_df.shape[0])):
 	caption = train_df.iloc[i]['caption']
 	caption = caption[1 : len(caption) - 1]
 	caption_list = caption.split("<>")
@@ -61,27 +57,23 @@ for i in range(train_df.shape[0]):
 			caption = caption + temp_str + "#"
 	caption = caption[0 : len(caption) - 1] # removing asterisk added at end
 	train_df.iloc[i]['caption'] = caption
-	if((i + 1) % 500 == 0 or (i + 1) == train_df.shape[0]): # update status
-		perc_progress = percentage_progress((i + 1), train_df.shape[0])
-		print("Completed pre-processing of train captions: ", perc_progress, " %", end='\r')
 print()
 
 # create a vocbulary of all unique words
 vocabulary = set() # perfect for making vocabulary - keeps only unique items
-for i in range(train_df.shape[0]):
+print("Creating vocabulary:")
+for i in tqdm(range(train_df.shape[0])):
 	caption = train_df.iloc[i]['caption']
 	caption_list = caption.split("#")
 	for j in range(len(caption_list)):
 		temp_str = caption_list[j]
 		vocabulary.update(temp_str.split(' '))
-	if((i + 1) % 1000 == 0 or (i + 1) == train_df.shape[0]):
-		perc_progress = percentage_progress((i + 1), train_df.shape[0]) 
-		print("Created vocabulary: ", perc_progress, " %", end='\r')
 print()
 
 # To make model robust, we will keep only those words whose frequency is more than WORD_COUNT_THRESH - creating a dictionary of word - frequency
 word_freq = dict()
-for i in range(train_df.shape[0]):
+print("Counting frequency of each word:")
+for i in tqdm(range(train_df.shape[0])):
 	caption = train_df.iloc[i]['caption']
 	caption_list = caption.split("#")
 	for j in range(len(caption_list)):
@@ -89,27 +81,23 @@ for i in range(train_df.shape[0]):
 		words = temp_str.split(" ")
 		for k in range(len(words)):
 			word_freq[words[k]] = word_freq.get(words[k], 0) + 1
-	if((i + 1) % 1000 == 0 or (i + 1) == train_df.shape[0]):
-		perc_progress = percentage_progress((i + 1), train_df.shape[0]) 
-		print("Completed counting frequency of unique words: ", perc_progress, " %", end='\r')
 print()
 
 # # To make model robust, we will keep only those words whose frequency is more than WORD_COUNT_THRESH - removing those unique words from vocabulary that have count less than WORD_COUNT_THRESH
 temp_count = 0
-for w in word_freq:
+print("Removing words with less frequency:")
+for w in tqdm(word_freq):
 	if(word_freq.get(w) < WORD_COUNT_THRESH):
 		vocabulary.remove(w)
 	temp_count += 1
-	if(temp_count % 1000 == 0 or temp_count == len(word_freq)):
-		perc_progress = percentage_progress(temp_count, len(word_freq))
-		print("Removing words from vocabular having count less than ", WORD_COUNT_THRESH, ", Progress: ", perc_progress, " %", end='\r')
 print()
 
 # removing words from captions that are not in vocabulary
 max_caption_length = 0
 max_i = 0
 max_j = 0
-for i in range(train_df.shape[0]):
+print("Removing words from train captions that are not in vocabulary:")
+for i in tqdm(range(train_df.shape[0])):
 	caption = train_df.iloc[i]['caption']
 	caption_list = caption.split("#")
 	caption = ''
@@ -129,9 +117,6 @@ for i in range(train_df.shape[0]):
 		caption = caption + temp_str + "#"
 	caption = caption[0 : len(caption) - 1] # to remove # added at end
 	train_df.iloc[i]['caption'] = caption
-	if((i + 1) % 1000 == 0 or (i + 1) == train_df.shape[0]):
-		perc_progress = percentage_progress((i + 1), train_df.shape[0]) 
-		print("Completed removing words from train captions that are not in vocabulary: ", perc_progress, " %", end='\r')
 print()
 print("Maximum caption length found (including 'startseq' and 'endseq', at index ", max_i, ", ", max_j, "): ", max_caption_length)
 
