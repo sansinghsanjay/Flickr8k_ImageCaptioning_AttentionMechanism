@@ -11,9 +11,6 @@ import pandas as pd
 import string
 from tqdm import tqdm
 
-# GLOBAL CONST
-WORD_COUNT_THRESH = 10
-
 # function to remove any single character from a string
 def removeSingleChar_removeNum(s):
 	# removing single characters (such as 'a', 's', etc.) from string s
@@ -61,6 +58,7 @@ print()
 
 # create a vocbulary of all unique words
 vocabulary = set() # perfect for making vocabulary - keeps only unique items
+vocabulary.update(["<UNK>"])
 print("Creating vocabulary:")
 for i in tqdm(range(train_df.shape[0])):
 	caption = train_df.iloc[i]['caption']
@@ -68,28 +66,6 @@ for i in tqdm(range(train_df.shape[0])):
 	for j in range(len(caption_list)):
 		temp_str = caption_list[j]
 		vocabulary.update(temp_str.split(' '))
-print()
-
-# To make model robust, we will keep only those words whose frequency is more than WORD_COUNT_THRESH - creating a dictionary of word - frequency
-word_freq = dict()
-print("Counting frequency of each word:")
-for i in tqdm(range(train_df.shape[0])):
-	caption = train_df.iloc[i]['caption']
-	caption_list = caption.split("#")
-	for j in range(len(caption_list)):
-		temp_str = caption_list[j]
-		words = temp_str.split(" ")
-		for k in range(len(words)):
-			word_freq[words[k]] = word_freq.get(words[k], 0) + 1
-print()
-
-# # To make model robust, we will keep only those words whose frequency is more than WORD_COUNT_THRESH - removing those unique words from vocabulary that have count less than WORD_COUNT_THRESH
-temp_count = 0
-print("Removing words with less frequency:")
-for w in tqdm(word_freq):
-	if(word_freq.get(w) < WORD_COUNT_THRESH):
-		vocabulary.remove(w)
-	temp_count += 1
 print()
 
 # removing words from captions that are not in vocabulary
@@ -109,7 +85,7 @@ for i in tqdm(range(train_df.shape[0])):
 				temp_str = temp_str.replace(words[k], '')
 				temp_str = temp_str.replace('  ', ' ')
 				temp_str = temp_str.strip()
-		temp_str = "startseq " + temp_str + " endseq" # adding startseq and endseq
+		temp_str = "<startseq> " + temp_str + " <endseq>" # adding startseq and endseq
 		if(max_caption_length < len(temp_str.split(" "))):
 			max_caption_length = len(temp_str.split(" "))
 			max_i = i
@@ -118,14 +94,14 @@ for i in tqdm(range(train_df.shape[0])):
 	caption = caption[0 : len(caption) - 1] # to remove # added at end
 	train_df.iloc[i]['caption'] = caption
 print()
-print("Maximum caption length found (including 'startseq' and 'endseq', at index ", max_i, ", ", max_j, "): ", max_caption_length)
+print("Maximum caption length found (including '<startseq>' and '<endseq>', at index ", max_i, ", ", max_j, "): ", max_caption_length)
 
 # adding startseq and endseq in vocabulary
-vocabulary.update(["startseq", "endseq"])
+vocabulary.update(["<startseq>", "<endseq>"])
 
 # saving max_caption_length, max_i and max_j
 f_ptr = open(target_path + "max_caption_length.txt", "w")
-temp_str = "Max length of caption (including 'startseq' and 'endseq', at index " + str(max_i) + ", " + str(max_j) + "): " + str(max_caption_length)
+temp_str = "Max length of caption (including '<startseq>' and '<endseq>', at index " + str(max_i) + ", " + str(max_j) + "): " + str(max_caption_length)
 f_ptr.write(temp_str)
 f_ptr.close()
 print("Saved max length of caption along with index in file max_caption_length.txt")
@@ -137,15 +113,10 @@ print("Saved train_image_caption_processed.csv")
 # saving vocabulary into a text file
 f_ptr = open(target_path + "vocabulary.txt", "w")
 vocabulary = list(vocabulary)
+vocabulary.sort()
+print("Length of Vocabulary: ", len(vocabulary))
 for i in range(len(vocabulary)):
 	if(len(vocabulary[i]) > 1):
 		f_ptr.write(vocabulary[i] + "\n")
 f_ptr.close()
 print("Saved vocabulary.txt")
-
-# saving word_freq into a csv file
-word_freq = pd.DataFrame.from_dict(word_freq, orient='index')
-word_freq = word_freq.reset_index()
-word_freq.columns = ['word', 'Freq']
-word_freq.to_csv(target_path + "WordFreq.csv", index=False)
-print("Saved WordFreq.csv")

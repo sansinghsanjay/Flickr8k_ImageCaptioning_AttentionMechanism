@@ -10,9 +10,6 @@ import pandas as pd
 import string
 from tqdm import tqdm
 
-# GLOBAL CONST
-WORD_COUNT_THRESH = 10
-
 # paths
 test_file_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/test_image_caption.csv"
 vocabulary_file_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/vocabulary.txt"

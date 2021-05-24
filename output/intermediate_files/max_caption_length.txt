@@ -1,1 +1,1 @@
-Max length of caption (including 'startseq' and 'endseq', at index 722, 4): 31
+Max length of caption (including '<startseq>' and '<endseq>', at index 722, 4): 34
