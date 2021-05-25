@@ -7,7 +7,7 @@ Followed this:
 https://www.tensorflow.org/tutorials/text/image_captioning
 '''
 
-img_path = ["/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/test_images/3270691950_88583c3524.jpg"]
+img_path = ["/home/sansingh/Downloads/man_cleaning_floor.jpg"]
 
 # packages
 import tensorflow as tf
@@ -31,7 +31,7 @@ EPOCHS = 20
 # paths
 vocabulary_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/vocabulary.txt"
 max_caption_len_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/max_caption_length.txt"
-checkpoint_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/trained_model_on_7591files_fullVocab_20Epochs_InceptionV3/ckpt-1"
+checkpoint_path = "/home/sansingh/github_repo/trained_models/Flickr8k_ImageCaptioning_AttentionMechanism/ckpt-1"
 
 class BahdanauAttention(tf.keras.Model):
 	def __init__(self, units):
@@ -183,4 +183,4 @@ for i in range(max_caption_len):
 	dec_input = tf.expand_dims([predicted_id], 0)
 result = ' '.join(result)
 print(result)
-print("LENGTH: ", len(result))
+print("LENGTH: ", len(result.split(' ')))
