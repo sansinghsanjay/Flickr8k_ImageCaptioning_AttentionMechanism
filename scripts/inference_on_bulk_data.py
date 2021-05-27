@@ -7,8 +7,6 @@ Followed this:
 https://www.tensorflow.org/tutorials/text/image_captioning
 '''
 
-img_path = ["/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/test_images/2285570521_05015cbf4b.jpg"]
-
 # packages
 import tensorflow as tf
 import random
@@ -22,16 +20,17 @@ import pandas as pd
 IMG_WIDTH = 299
 IMG_HEIGHT = 299
 IMG_CHANNEL = 3
-BATCH_SIZE = 64
-BUFFER_SIZE = 1000
+BATCH_SIZE = 1
+BUFFER_SIZE = 10
 EMBEDDING_DIMS = 256
 UNITS = 512
-EPOCHS = 20
 
 # paths
+test_images_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_dataset/test_images/"
 vocabulary_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/vocabulary.txt"
 max_caption_len_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/max_caption_length.txt"
 checkpoint_path = "/home/sansingh/github_repo/trained_models/Flickr8k_ImageCaptioning_AttentionMechanism/ckpt-1"
+target_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/generated_captions/"
 
 class BahdanauAttention(tf.keras.Model):
 	def __init__(self, units):
@@ -109,13 +108,19 @@ def loss_function(real, pred):
 
 # function to load image
 def load_image(path):
-	image_batch = np.ndarray([len(path), IMG_WIDTH, IMG_HEIGHT, IMG_CHANNEL])
+	image_data = np.ndarray([1, IMG_WIDTH, IMG_HEIGHT, IMG_CHANNEL])
 	img = tf.io.read_file(path[0])
 	img = tf.image.decode_jpeg(img, channels=3)
 	img = tf.image.resize(img, (IMG_WIDTH, IMG_HEIGHT))
 	img = tf.keras.applications.inception_v3.preprocess_input(img)
-	image_batch[0] = img
-	return image_batch
+	image_data[0] = img
+	return image_data
+
+# collecting name of test images
+test_images = list()
+test_files = os.listdir(test_images_path)
+for test_file in test_files:
+	test_images.append(test_images_path + test_file)
 
 # reading vocabulary file
 vocabulary = list()
@@ -149,11 +154,6 @@ new_input = image_model.input
 hidden_layer = image_model.layers[-1].output
 image_features_extract_model = tf.keras.Model(new_input, hidden_layer)
 
-# loading image, generating vgg-16 features 
-temp_input = tf.expand_dims(load_image(img_path)[0], 0)
-img_tensor_val = image_features_extract_model(temp_input)
-img_tensor_val = tf.reshape(img_tensor_val, (img_tensor_val.shape[0], -1, img_tensor_val.shape[3]))
-
 # optimizer and loss function
 optimizer = tf.keras.optimizers.Adam()
 loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
@@ -166,21 +166,34 @@ decoder = RNN_Decoder(EMBEDDING_DIMS, UNITS, vocab_size)
 ckpt = tf.train.Checkpoint(encoder=encoder, decoder=decoder, optimizer=optimizer)
 ckpt.restore(checkpoint_path)
 
-# generating encoder features
-features = encoder(img_tensor_val)
-dec_input = tf.expand_dims([wordtoix['<startseq>']], 0)
-result = []
+# predicting or generating captions
+all_captions = list()
+print("Generating / Predicting captions for test images: ")
+for i in tqdm(range(len(test_images))):
+	# loading image, generating vgg-16 features 
+	temp_input = tf.expand_dims(load_image([test_images[i]])[0], 0)
+	img_tensor_val = image_features_extract_model(temp_input)
+	img_tensor_val = tf.reshape(img_tensor_val, (img_tensor_val.shape[0], -1, img_tensor_val.shape[3]))
+	# generating encoder features
+	features = encoder(img_tensor_val)
+	dec_input = tf.expand_dims([wordtoix['<startseq>']], 0)
+	result = list()
+	# generating result
+	hidden = decoder.reset_state(batch_size=BATCH_SIZE)
+	for j in range(max_caption_len):
+		predictions, hidden, attention_weights = decoder(dec_input, features, hidden)
+		predicted_id = tf.argmax(predictions[0]).numpy()
+		if(ixtoword[predicted_id] == '<endseq>'):
+			break
+		result.append(ixtoword[predicted_id])
+		dec_input = tf.expand_dims([predicted_id], 0)
+	result = ' '.join(result)
+	all_captions.append(result)
+print()
 
-# generating result
-hidden = decoder.reset_state(batch_size=1)
-for i in range(max_caption_len):
-	predictions, hidden, attention_weights = decoder(dec_input, features, hidden)
-	#attention_plot[i] = tf.reshape(attention_weights, (-1, )).numpy()
-	predicted_id = tf.argmax(predictions[0]).numpy()
-	result.append(ixtoword[predicted_id])
-	if(ixtoword[predicted_id] == '<endseq>'):
-		break
-	dec_input = tf.expand_dims([predicted_id], 0)
-result = ' '.join(result)
-print(result)
-print("LENGTH: ", len(result.split(' ')))
+# writing all generated captions in a text file
+test_output_df = pd.DataFrame()
+test_output_df['image'] = test_images
+test_output_df['predicted captions'] = all_captions
+test_output_df.to_csv(target_path + "test_data_predicted_captions.csv", index=False)
+print("Saved predicted / generated captions for test data successfully. Shape: ", test_output_df.shape)

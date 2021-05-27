@@ -10,8 +10,8 @@ import pandas as pd
 import nltk.translate.bleu_score as bleu
 
 # paths
-candidate_captions_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/generated_captions/val_captions.txt" # generate captions
-references_captions_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning/output/intermediate_files/val_image_caption_processed.csv" # actual captions
+candidate_captions_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/generated_captions/test_data_predicted_captions.csv" # generate captions
+references_captions_path = "/home/sansingh/github_repo/Flickr8k_ImageCaptioning_AttentionMechanism/output/intermediate_files/test_image_caption_processed.csv" # actual captions
 
 # read reference captions csv file
 ref_df = pd.read_csv(references_captions_path)
@@ -21,21 +21,15 @@ ref_dict = dict()
 for i in range(ref_df.shape[0]):
 	ref_dict[ref_df.iloc[i]['image']] = ref_df.iloc[i]['caption']
 
-# read candidate captions txt file
-cand_dict = dict()
-f_ptr = open(candidate_captions_path, "r")
-lines = f_ptr.readlines()
-f_ptr.close()
-image_name = list()
-caption_list = list()
-for line in lines:
-	splits = line.split("#")
-	image_name.append(splits[0])
-	caption_list.append(splits[1])
+# read candidate captions csv file
+cand_df = pd.read_csv(candidate_captions_path)
 
 # putting all candidate values in a dictionary
-for i in range(len(image_name)):
-	cand_dict[image_name[i]] = caption_list[i]
+cand_dict = dict()
+for i in range(cand_df.shape[0]):
+	imagename = cand_df.iloc[i]['image'].split("/")
+	imagename = imagename[len(imagename) - 1]
+	cand_dict[imagename] = cand_df.iloc[i]['predicted captions']
 
 # making list of candidate and reference captions
 ref_list = list()
